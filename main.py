@@ -1,7 +1,7 @@
 import datetime
 import random
 
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, abort
 
 import tmdb_client
 
@@ -46,9 +46,15 @@ def homepage():
 @app.route("/movie/<int:movie_id>")
 def movie_details(movie_id):
     details = tmdb_client.get_single_movie(movie_id)
+    if details.get("success") == False:
+        abort(404)
     cast = tmdb_client.get_single_movie_cast(movie_id)
     movie_images = tmdb_client.get_movie_images(movie_id)
-    selected_backdrop = random.choice(movie_images['backdrops'])
+    if len(movie_images.get("backdrops")) > 0:
+        selected_backdrop = random.choice(movie_images.get("backdrops"))
+    else:
+        selected_backdrop = ""
+
     return render_template("movie_details.html", movie=details, cast=cast, selected_backdrop=selected_backdrop)
 
 
