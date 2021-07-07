@@ -33,7 +33,7 @@ def get_single_movie_cast(movie_id):
     endpoint = f"https://api.themoviedb.org/3/movie/{movie_id}/credits"
     headers = get_headers()
     response = requests.get(endpoint, headers=headers)
-    return response.json()["cast"]
+    return response.json().get("cast")
 
 
 def get_movie_images(movie_id):
@@ -43,12 +43,12 @@ def get_movie_images(movie_id):
     return response.json()
 
 
-def get_movies_list(list_type):
-    endpoint = f"https://api.themoviedb.org/3/movie/{list_type}"
-    headers = get_headers()
-    response = requests.get(endpoint, headers=headers)
-    response.raise_for_status()
-    return response.json()
+#def get_movies_list(list_type):
+#    endpoint = f"https://api.themoviedb.org/3/movie/{list_type}"
+#    headers = get_headers()
+#    response = requests.get(endpoint, headers=headers)
+#    response.raise_for_status()
+#    return response.json()
 
 
 def get_movies(how_many, list_type='popular'):
@@ -72,3 +72,15 @@ def get_airing_today():
     response.raise_for_status()
     response = response.json()
     return response['results']
+
+
+def call_tmdb_api(endpoint):
+    full_url = f"https://api.themoviedb.org/3/{endpoint}"
+    headers = get_headers()
+    response = requests.get(full_url, headers=headers)
+    response.raise_for_status()
+    return response.json()
+
+def get_movies_list(list_type):
+   return call_tmdb_api(f"movie/{list_type}")
+
